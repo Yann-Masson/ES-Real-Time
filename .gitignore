@@ -1,0 +1,76 @@
+# Build artifacts and object files
+*.o
+*.obj
+*.elf
+*.hex
+*.bin
+*.img
+*.iso
+
+# Archive files
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+
+# Compressed files
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# Debug files
+*.pdb
+*.map
+*.lst
+*.sym
+
+# Temporary and backup files
+*~
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# Build directories
+build/
+dist/
+out/
+target/
+
+# Log files
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Dependency directories
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Cache directories
+.cache/
+*.cache

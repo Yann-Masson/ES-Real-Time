@@ -158,7 +158,7 @@ void shiftRight(int n, iRegister *r) {
     }
 
     r->content >>= n;
-    r->content &= ~(~0 << (32 - n)); // Reset the n leftmost bits to 0
+    r->content &= ~(~0U << (32 - n)); // Reset the n leftmost bits to 0
 
     // post-condition
     for (int i = 31; i >= 32 - n; i--) {
