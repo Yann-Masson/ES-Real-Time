@@ -181,11 +181,10 @@ void shiftLeft(int n, iRegister *r) {
     }
 
     r->content <<= n;
-    r->content &= ~((~0) >> (32 - n)); // Reset the n rightmost bits to 0
 
     // post-condition
     for (int i = 0; i < n; i++) {
-        if ((r->content & (1 << i)) != 0) {
+        if ((r->content & (1u << i)) != 0) {
             fprintf(stderr, "Error: Failed to shift left, bit %d is not zero\n", i);
             exit(1);
         }

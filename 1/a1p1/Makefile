@@ -88,7 +88,6 @@ clean-all: clean clean-test
 
 run: $(MAIN)
 	@echo "Raspberry Pi image $(MAIN) built successfully!"
-	@echo "Copy $(MAIN) to your Raspberry Pi to run it."
 
 # Help target
 help:

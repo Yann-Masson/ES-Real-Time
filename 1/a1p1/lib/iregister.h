@@ -8,15 +8,24 @@
 
 /**
  *  iRegister
- *  An iRegister is a structure which represents an 32-bit register and
- *  is equipped with standard operations to modify and display them.
+ *  A lightweight structure representing a (nominal) 32-bit register and
+ *  equipped with standard bit/nibble operations plus string conversion.
+ *
+ *  IMPORTANT IMPLEMENTATION NOTE:
+ *  - The underlying type is 'int'. The code assumes (as is typical on the
+ *    target platform) that 'int' is 32 bits. All operations treat the
+ *    register as a 32-bit quantity.
+ *  - Every API in this header performs parameter validation. On any
+ *    contract violation (NULL pointer, out-of-range index/value), the
+ *    implementation prints an error message to stderr and terminates the
+ *    program via exit(1). No error codes are returned.
  */ 
 typedef struct{
     int content;
 } iRegister;
 
 
-/** @brief resets all the bits of the iRegister (to 0).
+/** @brief Resets all the bits of the iRegister (to 0).
  *   
  *  @param r A pointer to a memory location of a iRegister data structure.
  * 
@@ -36,7 +45,7 @@ typedef struct{
 void resetAll(iRegister *r);
 
 
-/** @brief sets the i'th bit of the iRegister (to 1)
+/** @brief Sets the i'th bit of the iRegister (to 1)
  * 
  *  @param i Is i'th bit of the iRegister to be set
  * 
@@ -61,7 +70,7 @@ void resetAll(iRegister *r);
 void setBit(int i, iRegister *r);
 
 
-/** @brief sets all the bits of the iRegister (to 1) 
+/** @brief Sets all the bits of the iRegister (to 1) 
  * 
  *  @param r A pointer to a memory location of a iRegister data structure.
  * 
@@ -81,13 +90,14 @@ void setBit(int i, iRegister *r);
 void setAll(iRegister *r);
 
 
-/** @brief returns the i'th bit of the iRegister as an integer (1 if it is set, or 0 otherwise)
+/** @brief Returns the i'th bit of the iRegister as an integer (1 if it is set, or 0 otherwise)
  *
  *  @param i Is i'th bit of the iRegister to be returned
  * 
  *  @param r A pointer to a memory location of a iRegister data structure.
  *
- *  @return 1 if i'th bit is set, 0 if the bit is not set, -1 if there was an error. 
+ *  @return 1 if i'th bit is set, 0 if the bit is not set.
+ *          (On invalid parameters the function prints an error and exits.)
  *
  *  Pre-condition: 0 <= i < 32 and iRegister != NULL
  *
@@ -101,9 +111,13 @@ void setAll(iRegister *r);
 int getBit(int i, iRegister *r);
 
 
-/** @brief Sets the n nibble (4 bits) of the iRegister to value.
+/** @brief Sets the nibble (4 bits) at position 'pos' of the iRegister to 'value'.
  *
- * @param pos Indicates which nibble to set: 1 for the least significant nibble (bits 0-3), 2 for the next nibble (bits 4-7)...
+ * @param pos 0-based nibble index in the range [0..7], where:
+ *            pos = 0 => bits 0-3 (least significant nibble)
+ *            pos = 1 => bits 4-7
+ *            ...
+ *            pos = 7 => bits 28-31 (most significant nibble)
  *
  * @param value The 4-bit value (0-15) to assign to the specified nibble.
  *
@@ -112,8 +126,8 @@ int getBit(int i, iRegister *r);
  * @return void
  *
  * Pre-condition:
- * pos is between 0 and 7
- * 0 <= value < 16
+ * 0 <= pos <= 7
+ * 0 <= value <= 15
  * r != NULL
  *
  * Post-condition:
@@ -131,16 +145,16 @@ int getBit(int i, iRegister *r);
 void assignNibble(int pos, int value, iRegister *r);
 
 
-/** @brief Get the first (for pos=0) or the second (for pos=7) four bits of iRegister content.
+/** @brief Returns the nibble (4 bits) at position 'pos'.
  *
- * @param pos Indicates which nibble to get: 1 for the least significant nibble (bits 0-3), 2 for the next nibble (bits 4-7).
+ * @param pos 0-based nibble index in the range [0..7] (see assignNibble for mapping).
  *
  * @param r A pointer to an iRegister structure.
  *
  * @return The value of the specified nibble (0-15).
  *
  * Pre-condition:
- * pos is between 0 and 7
+ * 0 <= pos <= 7
  * r != NULL
  *
  * Properties:
@@ -160,9 +174,12 @@ int getNibble(int pos, iRegister *r);
  * @param r An iRegister structure (passed by value)
  *
  * @return A pointer to a null-terminated string of 32 characters, where each character
- *         is either '1' (ASCII 49) if the corresponding bit is set, or '0' (ASCII 48)
- *         if the bit is not set. The string represents bits from most significant (bit 31)
- *         to least significant (bit 0).
+ *         is either '1' if the corresponding bit is set, or '0' if the bit is not set.
+ *         The string represents bits from most significant (bit 31) to least (bit 0).
+ *
+ * Lifetime / Reentrancy:
+ *   The implementation uses a single static internal buffer; each call overwrites
+ *   the previous result. Not thread-safe. Copy the string if you need to keep it.
  *
  * Properties:
  * If bit i is set in r.content, then returned_string[31-i] == '1'
@@ -177,7 +194,7 @@ int getNibble(int pos, iRegister *r);
 char *reg2str(iRegister r);
 
 
-/** @brief Shifts all the bits of the iRegister to the right by n places (appends 0 from the left)
+/** @brief Shifts all the bits of the iRegister to the right by n places (fills with 0s on the left).
  *
  * @param n The number of positions to shift right (1 <= n <= 32)
  *
@@ -197,6 +214,10 @@ char *reg2str(iRegister r);
  * After shiftRight(n, r), bit i contains the value that was previously in bit (i+n)
  * For i+n > 31, bit i becomes 0
  *
+ * Note: The implementation accepts n == 32, which triggers a full clear in practice; however,
+ *       in standard C, shifting a 32-bit int by 32 is technically undefined behavior. This
+ *       code relies on typical target compiler behavior. Prefer 1..31 for portable code.
+ *
  * test-cases:
  * 1. Allocate iRegister r, setBit(5, &r), shiftRight(2, &r), check getBit(3, &r) == 1.
  * 2. shiftRight(32, &r), check reg2str(r) == "000...0".
@@ -204,7 +225,7 @@ char *reg2str(iRegister r);
 void shiftRight(int, iRegister *);
 
 
-/** @brief Shifts all the bits of the iRegister to the left by n places (appends 0 from the right)
+/** @brief Shifts all the bits of the iRegister to the left by n places (fills with 0s on the right).
  *
  * @param n The number of positions to shift left (1 <= n <= 32)
  *
@@ -224,6 +245,9 @@ void shiftRight(int, iRegister *);
  * After shiftLeft(n, r), bit i contains the value that was previously in bit (i-n)
  * For i-n < 0, bit i becomes 0
  *
+ * Note: As with shiftRight, n == 32 depends on target behavior and is outside strictly
+ *       defined shift ranges for a 32-bit int. Use 1..31 for fully portable code.
+ *
  * test-cases:
  * 1. Allocate iRegister r, setBit(2, &r), shiftLeft(2, &r), check getBit(4, &r) == 1.
  * 2. shiftLeft(32, &r), check reg2str(r) == "000...0".
@@ -231,7 +255,7 @@ void shiftRight(int, iRegister *);
 void shiftLeft(int, iRegister *);
 
 
-/** @brief Resets the i'th bit of the iRegister (to 0)
+/** @brief Resets (clears to 0) the i'th bit of the iRegister.
  *
  *  @param i Is i'th bit of the iRegister to be reset
  * 

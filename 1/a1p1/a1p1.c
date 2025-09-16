@@ -15,15 +15,11 @@
 #define LINE 80
 #define MAX_FUNCTION_NAME_WITH_PARAMETERS 50
 
-void printNumber(int number)
+void printNumber(unsigned int number)
 {
 	if (number == 0) {
 		uart_puts("0");
 		return;
-	}
-	if (number < 0) {
-		uart_puts("-");
-		number = -number;
 	}
 	if (number / 10) {
 		printNumber(number / 10);
@@ -34,7 +30,7 @@ void printNumber(int number)
 	uart_puts(buffer);
 }
 
-void printResult(const char *functionNameWithParameters, int result, iRegister *r)
+void printResult(char *functionNameWithParameters, int result, iRegister *r)
 {
 	char *bitString = NULL;
 	
@@ -84,8 +80,6 @@ int retrieveUserInputNumber()
 int main()
 {
 	iRegister r;
-	char str[LINE];
-	char c;
 	int inumber, inibble, ibit, ishift = 0;
 
 	// Using the uart
@@ -93,16 +87,6 @@ int main()
 	uart_init();
 	uart_clear();
 
-	// To Display a string
-	// uart_puts("String\n");
-
-	// To get one character
-	// c=uart_getc();
-
-	// However, to get a number, you need to call uart_getc 
-	// multiple times until receiving a new line.
-	// The results of each call to uart_getc can be stored into str
-	// atoi(str) will result a number.
 	uart_puts("Enter an integer number (32 bit): ");
 	inumber = retrieveUserInputNumber();
 	r.content = inumber;
@@ -140,24 +124,27 @@ int main()
 	resetAll(&r);
 	printResult("resetAll(&r)", r.content, &r);
 
-	setBit(1, &r);
-	printResult("setBit(1, &r)", r.content, &r);
+	setBit(ibit, &r);
+	printResult("setBit(ibit, &r)", r.content, &r);
 
-	int getBitResult = getBit(1, &r);
-	printResult("getBit(1, &r)", getBitResult, NULL);
+	int getBitResult = getBit(ibit, &r);
+	printResult("getBit(ibit, &r)", getBitResult, NULL);
 
-	resetBit(1, &r);
-	printResult("resetBit(1, &r)", r.content, &r);
+	resetBit(ibit, &r);
+	printResult("resetBit(ibit, &r)", r.content, &r);
 
-	assignNibble(2, 1, &r);
-	printResult("assignNibble(2, 1, &r)", r.content, &r);
+	assignNibble(inibble, 0xA, &r);
+	printResult("assignNibble(inibble, 0xA, &r)", r.content, &r);
 
-	int getNibbleResult = getNibble(2, &r);
-	printResult("getNibble(2, &r)", getNibbleResult, &r);
+	int getNibbleResult = getNibble(inibble, &r);
+	printResult("getNibble(inibble, &r)", getNibbleResult, &r);
 
-	shiftRight(3, &r);
-	printResult("shiftRight(3, &r)", r.content, &r);
+	shiftRight(ishift, &r);
+	printResult("shiftRight(ishift, &r)", r.content, &r);
 
-	shiftLeft(3, &r);
-	printResult("shiftLeft(3, &r)", r.content, &r);
+	assignNibble(inibble, 0x5, &r);
+	printResult("assignNibble(inibble, 0x5, &r)", r.content, &r);
+
+	shiftLeft(ishift, &r);
+	printResult("shiftLeft(ishift, &r)", r.content, &r);
 }
