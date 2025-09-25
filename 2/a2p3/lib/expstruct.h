@@ -20,14 +20,13 @@ typedef struct expStruct ExpStruct;
 
 /** @brief approximate e^x using Taylor series expansion. 
  *
- *  @return the approximated value of e^x in structure expStruct, 
- *  consisting of an integer part and a fraction part (2 digits)
+ *  @return A dynamically allocated pointer to an expStruct with the approximated value for e^x, 
+ *          containing an integer part (expInt) and a fraction part with two digits (expFraction).
+ *          Or NULL if the computation is not yet finished.
  *
  *  Pre-condition: 0 <= x <= 20
  *
- *  Post-condition: e->expFraction < 100, The fraction-part should only have two digits
- *
- *  properties:
+ *  Post-condition: 0 <= e->expFraction <= 99, The fraction-part should only have two digits
  *  
  */
 ExpStruct *iexp ();

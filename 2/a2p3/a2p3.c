@@ -32,12 +32,10 @@ int main()
 
 		if (value) {
 			piface_clear();
-			for (int i = 0; i < LINE; i++)
-			{
+			for (int i = 0; i < LINE; i++) {
 				str[i] = '\0';
 			}
-			if (value->expFraction < 10)
-			{
+			if (value->expFraction < 10) {
 				sprintf(str,"%d: %d.0%d\n", value->x, value->expInt, value->expFraction);
 			} else {
 				sprintf(str,"%d: %d.%d\n", value->x, value->expInt, value->expFraction);

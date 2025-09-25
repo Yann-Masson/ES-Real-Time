@@ -16,7 +16,6 @@
 
 int main()
 {
-	
 	char str[LINE];
 	piface_init();
 	piface_clear();
@@ -26,7 +25,7 @@ int main()
 	
 	while (1) {
 		for (int i = 1; i <= 20; i++) {
-			ExpStruct* value = iexp(i);
+			ExpStruct *value = iexp(i);
 			
 			piface_clear();
 
@@ -39,7 +38,6 @@ int main()
 			free(value);
 		}
 	}
-	
 
 	return 0;
 }

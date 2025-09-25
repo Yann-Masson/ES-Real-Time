@@ -29,15 +29,9 @@ static struct PendingExpData* pendingExp = NULL;
 static int currentX = 1;
 
 #define TASK_MAX_TIME 100000
+#define EPSILON 0.0001
 
 ExpStruct *iexp() {
-	// pre-condition
-    // if (x < 0 || x > 20)
-    // {
-    //     fprintf(stderr, "Error: Invalid input range\n");
-    //     exit(1);
-    // }
-
     if (pendingExp == NULL) {
         pendingExp = malloc(sizeof(struct PendingExpData));
 
@@ -48,7 +42,7 @@ ExpStruct *iexp() {
 
         pendingExp->factorial = 1;
         pendingExp->n = 1;
-        pendingExp->sum = 1;
+        pendingExp->sum = 1; // the sum of the taylor-expansion, where 1 is the first term for n = 0
         pendingExp->term = 0;
         pendingExp->xpow = 1;
     }
@@ -68,6 +62,7 @@ ExpStruct *iexp() {
 
         pendingExp->sum = pendingExp->sum + pendingExp->term;
 
+        // control if the term is so small that it does not affect the sum, if so then break the while loop
         if (pendingExp->term < 0.0001) {
             completed = true;
             break;

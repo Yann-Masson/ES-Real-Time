@@ -6,7 +6,7 @@
 /*
  * Modified by Wagner Morais on Aug 2022.
  */
- 
+
 #ifndef _EXPSTRUCT_H
 #define _EXPSTRUCT_H
 
@@ -17,18 +17,16 @@ struct expStruct {
 
 typedef struct expStruct ExpStruct;
 
-/** @brief approximate e^x using Taylor series expansion. 
+/** @brief Approximate e^x using Taylor series expansion. 
  *
  *  @param x the exponent of the fuction e^x
  *
- *  @return the approximated value of e^x in structure expStruct, 
- *  consisting of an integer part and a fraction part (2 digits)
+ *  @return A dynamically allocated pointer to an expStruct with the approximated value for e^x, 
+ *          containing an integer part (expInt) and a fraction part with two digits (expFraction)
  *
  *  Pre-condition: 0 <= x <= 20
  *
- *  Post-condition: e->expFraction < 100, The fraction-part should only have two digits
- *
- *  properties:
+ *  Post-condition: 0 <= expFraction <= 99, The fraction-part should only have two digits
  *  
  */
 ExpStruct *iexp (int);
