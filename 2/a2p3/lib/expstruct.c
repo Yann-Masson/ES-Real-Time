@@ -13,10 +13,11 @@
 #include "expstruct.h"
 #include <stdio.h>
 #include "led.h"
+#include "rpi-systimer.h"
 
-#define MAX_ITERATIONS 10
+#define MAX_ITERATIONS 5
 
-ExpStruct *iexp(int x){
+ExpStruct *iexp(int x) {
 	// pre-condition
     if (x < 0 || x > 20){
         fprintf(stderr, "Error: Invalid input range\n");
@@ -31,6 +32,8 @@ ExpStruct *iexp(int x){
 
     int loop_counter = 0;
 
+    led_toggle();
+
     while (n < 100) {
 
         factorial = factorial * n;
@@ -41,7 +44,7 @@ ExpStruct *iexp(int x){
 
         // control if the term is so small that it does not affect the sum, if so then break the while loop
         if (term < 0.0001) break;
-        
+
         n++;
         loop_counter++;
 

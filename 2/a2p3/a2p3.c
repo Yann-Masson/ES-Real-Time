@@ -20,6 +20,8 @@ int main()
 	char str[LINE];
 	piface_init();
 	piface_clear();
+
+	led_init();
 	
 	piface_puts("DT8025 - A2P3");
 	RPI_WaitMicroSeconds(2000000);
@@ -37,9 +39,9 @@ int main()
 			}
 
 			if (value->expFraction < 10) {
-				sprintf(str,"%d: %d.0%d", i, value->expInt, value->expFraction);
+				sprintf(str,"%d: %d.0%d\n", i, value->expInt, value->expFraction);
 			} else {
-				sprintf(str,"%d: %d.%d", i, value->expInt, value->expFraction);
+				sprintf(str,"%d: %d.%d\n", i, value->expInt, value->expFraction);
 			}
 			piface_puts(str);
 			free(value);
