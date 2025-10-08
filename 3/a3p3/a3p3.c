@@ -47,14 +47,18 @@ int is_prime(int i)
  */
 void computePrimes(int seg)
 {
-	for (int n = 0;; n++)
+	int n = 0;
+
+	while (1)
 	{
 		if (is_prime(n))
 		{
-			PUTTOLDC("T%d: Prime %d\n", seg, n);
+			// PUTTOLDC("T%d: Prime %d\n", seg, n);
+			print_at_seg(seg, n);
 			// RPI_WaitMicroSeconds(500000); // delay of 0.5s added for visualization purposes!!!
 			yield();
 		}
+		n += 1;
 	}
 }
 
@@ -63,14 +67,12 @@ void computePrimes(int seg)
  */
 void computePower(int seg)
 {
-	int n = 0;
-
-	while (1)
+	for (int n = 0;; n++)
 	{
-		PUTTOLDC("T%d: %d^2=%d\n", seg, n, n * n);
+		// PUTTOLDC("T%d: %d^2=%d\n", seg, n, n*n);
+		print_at_seg(seg, n * n);
 		// RPI_WaitMicroSeconds(500000); // delay of 0.5s added for visualization purposes!!!
 		yield();
-		n += 1;
 	}
 }
 
@@ -81,7 +83,6 @@ void computePower(int seg)
 void computeExponential(int seg)
 {
 	ExpStruct *value;
-
 	while (1)
 	{
 		for (int n = 1; n < 20;)
@@ -91,7 +92,18 @@ void computeExponential(int seg)
 
 			// If `seg` is odd, the function displays the fraction part of iexp; otherwise, it displays the integer part.
 
+			if (seg % 2)
+			{
+				print_at_seg(seg, value->expFraction);
+			}
+			else
+			{
+				print_at_seg(seg, value->expInt);
+			}
+
+			// RPI_WaitMicroSeconds(500000); // delay of 0.5s added for visualization purposes!!!
 			free(value);
+			yield();
 		}
 	}
 }
@@ -99,12 +111,11 @@ void computeExponential(int seg)
 int main()
 {
 	piface_init();
-	piface_clear();
-
-	piface_puts("DT8025 - A3P1");
+	piface_puts("DT8025 - A3P3");
 	RPI_WaitMicroSeconds(2000000);
 	piface_clear();
-
 	spawn(computePower, 0);
-	computePrimes(1);
+	spawn(computePrimes, 1);
+	spawn(computeExponential, 2);
+	computeExponential(3);
 }

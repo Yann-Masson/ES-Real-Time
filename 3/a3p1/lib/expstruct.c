@@ -15,10 +15,6 @@
 #include "led.h"
 #include "rpi-systimer.h"
 
-#define MAX_ITERATIONS 100
-
-static int loop_counter = 0;
-
 ExpStruct *iexp(int x) {
 	// pre-condition
     if (x < 0 || x > 20){
@@ -44,12 +40,6 @@ ExpStruct *iexp(int x) {
         if (term < 0.0001) break;
 
         n++;
-        loop_counter++;
-
-        if (loop_counter >= MAX_ITERATIONS) {
-            loop_counter = 0;
-            led_toggle();
-        }
 
         // a delay to make the results visually observable
         // RPI_WaitMicroSeconds(10000);
