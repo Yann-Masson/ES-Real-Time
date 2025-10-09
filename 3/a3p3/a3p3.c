@@ -19,11 +19,13 @@
 #include "piface.h"
 #include "expstruct.h"
 
-/** @brief Checks whether the input parameter is divisible by itself and 1, i.e, if the input parameter is prime.
+/**
+ *  @brief Checks whether the input parameter is divisible by itself and 1, i.e, if the input parameter is prime.
+ *
  *  @param int i Is the input parameter to be checked whether it is prime or not
  *  @return int Returns 1 if the input parameter is prime, else it returns 0.
  *
- *  Pre-condition: Input parameter i mus tbe positive
+ *  Pre-condition: Input parameter i must be positive
  *
  *  test-cases:
  *  is_prime(7) must return 1, i.e., true
@@ -62,7 +64,9 @@ void computePrimes(int seg)
 	}
 }
 
-/** @brief For all positive integers, displays the power of a given number
+/**
+ * @brief For all positive integers, displays the power of a given number
+ *
  * @param int seg Is the segment, i.e., 0: top left, 1:top right, 2: bottom left and 3: bottom right.
  */
 void computePower(int seg)
@@ -76,13 +80,16 @@ void computePower(int seg)
 	}
 }
 
-/** @brief Loops over the positive integers less than 21,
+/**
+ * @brief Loops over the positive integers less than 21,
  * calculates the exponential function and displays the integer part in a given segment.
+ *
  * @param int seg Is the segment, i.e., 0: top left, 1:top right, 2: bottom left and 3: bottom right.
  */
 void computeExponential(int seg)
 {
 	ExpStruct *value;
+
 	while (1)
 	{
 		for (int n = 1; n < 20;)
@@ -91,7 +98,6 @@ void computeExponential(int seg)
 			value = iexp(n++);
 
 			// If `seg` is odd, the function displays the fraction part of iexp; otherwise, it displays the integer part.
-
 			if (seg % 2)
 			{
 				print_at_seg(seg, value->expFraction);
