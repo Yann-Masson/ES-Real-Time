@@ -1,0 +1,6 @@
+Question: Consider the computeSomething function, which has a fixed-length execution
+time slightly equal to 1 tick. Remove the code while(t==ticks);, compile the code, and
+boot the RPi using the newly created kernel
+
+If we remove the code while(t==ticks);, the function computeSomething will terminate faster
+than 1 tick because it's doesn't wait for the next tick. (It terminate too soon).

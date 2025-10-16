@@ -1,0 +1,20 @@
+a. What is the purpose of the macros DISABLE() and ENABLE()?
+
+The macros DISABLE() and ENABLE() are used to manage the interrupt state of the system.
+DISABLE() is called to disable interrupts, ensuring that the current thread's execution is not interrupted by other threads
+or interrupt service routines while critical sections of code are being executed.
+This is important for maintaining data integrity and preventing race conditions.
+ENABLE() is called to re-enable the interrupts after the "critical" section of code has been executed.
+
+
+b. What potential issues could arise if a yield() call were injected at the least suitable
+location within functions like dispatch() or enqueue()? How about injecting such a call into yield() itself?
+
+
+Calling yield() within dispatch() or enqueue() (or in yield() itself) could lead to several problems:
+
+1. Inconsistent State: If yield() is called while another thread is being dispatched or enqueued, it could leave the system in an inconsistent state, where the current thread is not properly saved, and the new thread is not correctly restored.
+2. Deadlocks: If yield() is called while holding a lock (e.g., a mutex), it could lead to deadlocks if the next thread to run also tries to acquire the same lock.
+3. Infinite recursive loop: If you call yield() in yield(), you'll have an infinite loop.
+
+Injecting yield() during a context switch is problematic because it interrupts the process of switching threads, potentially leading to undefined behavior.

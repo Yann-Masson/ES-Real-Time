@@ -1,0 +1,24 @@
+﻿AnswersA3P3
+
+11. Update the a3p3.c with :
+
+int main() {
+    piface_init();
+    piface_puts("DT8025 - A3P3");
+    RPI_WaitMicroSeconds(2000000);
+    piface_clear();
+    spawn(computePower, 0);
+    spawn(computePower, 1);
+    spawn(computePrimes, 2);
+    spawn(computePrimes, 3);
+    spawn(computeExponential, 4);
+    spawn(computeExponential, 5);
+    computeExponential(6);
+}
+
+
+
+
+12. Compile the code and boot the RPi using the newly created kernel, i.e., `a3p3.img`. Does it work? Provide an explanation for why this new kernel is not working as expected.
+
+The current code doesn’t work - the screen stays blank because we’ve hit the maximum number of allowed threads. This limit is defined by the variable NTHREADS (currently set to 5). Since we’re trying to spawn 6 threads, the 6th call to spawn() fails when dequeue(&freeQ) returns NULL. The code doesn’t handle this error, which leads to a crash and a blank screen. However, we can adjust this value if needed.

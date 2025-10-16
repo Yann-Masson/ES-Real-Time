@@ -1,0 +1,61 @@
+AnswersA3P2
+
+1. What is the purpose of the `spawn` function? How does it work?
+The spawn function creates a new thread without directly running it. 
+Firstly, DISABLE() is used to disable interrupts so that other threads cannot manipulate freeQ and readyQ during creation of the new thread. The function then dequeues freeQ, which points to a queue of free thread_block instances in the thread array. The dequequed thread_block is then used to save the function and argument for the new thread. 
+
+
+setjmp(newp->context) saves the current machine state, which returns 0 the first time and then 1 when jumping back with longjmp. It is when jumping back that the thread gets to run. 
+SETSTACK gives each thread its own stack in memory. Then the new thread is put into the readyQ. And lastly we can enable interrupts again. 
+
+
+2. What is the purpose of the `dispatch` function? How does it work?
+The dispatch function pauses the current thread and starts or resumes the execution of the selected next thread. 
+This is done by first saving the current machine state for the current thread, so that we can resume that thread later on. Then setting the current thread to the selected next thread and jumping to where it last was. 
+
+
+3. What is the purpose of the `yield` function? How does it work?
+The yield function preempts the execution of the current thread so another thread gets to run. 
+Firstly, we take out the first thread in the readyQ that will be running next, and put the current thread last in the readyQ. Then the dequeued thread is dispatched. 
+
+
+4. When is the code `current->function(current->arg);` within the `spawn` function executed?
+During the initial call to spawn, the line is not executed. The code is executed when the thread is scheduled to run next, that is when another thread calls yield and gets dispatched and performs a longjump to the next threads context in the readyQ which returns 1. 
+
+
+5. After finishing the execution of line 3, describe the content of `readyQ`. 
+   1. Note: you might want to draw a diagram to visualize the queue. 
+After finishing the execution of line 3, the content of the readyQ is the newly created threadblock for the function computePower. The threadblock was taken from the freeQ. 
+See A3P2Diagram.pdf to see the diagram.
+
+
+6. After finishing the execution of line 3, describe the content of `freeQ`.
+   1. Note: you might want to draw a diagram to visualize the queue. 
+After the initialization, five free threadblocks were created and put into the freeQ. When spawn is called for line 3, it dequeues the first available threadblock from the freeQ to use for the new thread. So the remaining four threadblocks are what is left in the freeQ after the execution of line 3. 
+See A3P2Diagram.pdf to see the diagram.
+
+
+7. Which task, i.e., computePower and computePrimes, executes first, and why?
+computePrimes executes first, because computePower cannot execute before computePrimes calls yield(). Calling spawn(computePower, 0); just creates the new thread and puts it in the readyQ without executing the function. The function computePrimes executes directly in the main. 
+
+
+8.  Although functions `computePower` and `computePrimes` never return, they execute concurrently in the `a3p1.img` kernel. How is this achieved? 
+Because both functions are in infinite loops and calls yield to take turns executing. Each thread runs a little, then yields, which gives the impression that they run concurrently.
+
+
+9. In a hypothetical scenario where `computePower` and `computePrimes` do return, which implies that the threads assigned to execute the tasks will terminate, you may need to track which threads terminated. One approach is to keep information about the terminated threads in a list called `doneQ`. Where in `lib/tinythreads.c` would you add a thread that terminated into `doneQ`?
+In spawn. When current->function(current->arg) returns, that is when the thread has terminated. And it is right after that we want to track the terminated tasks.  
+For example: 
+void spawn(void (* function)(int), int arg) {
+        …….
+        if (setjmp(newp->context) == 1) {
+                ENABLE();
+                current->function(current->arg);
+                DISABLE();
+                enqueue(current, &doneQ);
+                enqueue(current, &freeQ);
+                current = NULL;
+                dispatch(dequeue(&readyQ));        
+        }
+…….
+}
