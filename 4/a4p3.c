@@ -113,7 +113,7 @@ void computeSomething(int seg) {
 int main() {
 	piface_init();
 	piface_puts("DT8025 - A4P2");
-	RPI_WaitMicroSeconds(2000000);	
+	RPI_WaitMicroSeconds(2000000);
 	piface_clear();
     
 	spawnWithDeadline(computeSomething, 0, 5, 5);
